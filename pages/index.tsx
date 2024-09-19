@@ -1,15 +1,24 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import type { NextPage } from "next";
+import dynamic from "next/dynamic";
+
+// Dynamically import the EarthSimulation component with SSR disabled
+const EarthSimulation = dynamic(() => import("./EarthSimulation"), {
+  ssr: false,
+});
 
 const Home: NextPage = () => {
-  const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    router.push("/InteractiveEarthPage");
-  }, [router]);
+    setIsMounted(true);
+  }, []);
 
-  return null;
+  return (
+    <div style={{ width: "100vw", height: "100vh" }}>
+      {isMounted && <EarthSimulation />}
+    </div>
+  );
 };
 
 export default Home;
