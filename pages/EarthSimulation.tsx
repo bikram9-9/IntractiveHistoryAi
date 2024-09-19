@@ -25,7 +25,7 @@ const EarthSimulation: React.FC = () => {
     const earthGeometry = new THREE.SphereGeometry(5, 256, 256); // Increased segment count for higher detail
     const textureLoader = new THREE.TextureLoader();
     const earthTexture = textureLoader.load(
-      "/images/highres-earth-texture.jpg",
+      "/images/earth-texture.jpg",
       (texture) => {
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy(); // Improve texture sharpness at angles
         texture.minFilter = THREE.LinearMipmapLinearFilter; // Enable mipmapping
@@ -33,7 +33,6 @@ const EarthSimulation: React.FC = () => {
         texture.generateMipmaps = true; // Generate mipmaps for the texture
       }
     );
-    earthTexture.encoding = THREE.sRGBEncoding; // Improve color accuracy
     const earthMaterial = new THREE.MeshStandardMaterial({
       map: earthTexture,
       roughness: 0.5,
