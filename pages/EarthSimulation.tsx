@@ -21,6 +21,27 @@ const EarthSimulation: React.FC = () => {
     renderer.setPixelRatio(window.devicePixelRatio);
     mountRef.current.appendChild(renderer.domElement);
 
+    // Starry background
+    // Stars
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.1,
+    });
+    const starsVertices = [];
+    for (let i = 0; i < 10000; i++) {
+      const x = THREE.MathUtils.randFloatSpread(2000);
+      const y = THREE.MathUtils.randFloatSpread(2000);
+      const z = THREE.MathUtils.randFloatSpread(2000);
+      starsVertices.push(x, y, z);
+    }
+    starsGeometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(starsVertices, 3)
+    );
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starField);
+
     // Earth
     const earthRadius = 5;
     const earthGeometry = new THREE.SphereGeometry(earthRadius, 64, 64);
@@ -56,7 +77,7 @@ const EarthSimulation: React.FC = () => {
         const geoJson = await response.json();
 
         const material = new THREE.LineBasicMaterial({
-          color: 0x000000, // Changed to black
+          color: 0x000000,
           transparent: true,
           opacity: 0.5,
         });
@@ -88,15 +109,14 @@ const EarthSimulation: React.FC = () => {
       for (let i = 0; i < coordinates.length; i++) {
         const coord = coordinates[i];
         const nextCoord = coordinates[(i + 1) % coordinates.length];
-        points.push(latLonToVector3(coord[1], coord[0], earthRadius + 0.005)); // Slightly above the surface
+        points.push(latLonToVector3(coord[1], coord[0], earthRadius + 0.005));
         points.push(
           latLonToVector3(nextCoord[1], nextCoord[0], earthRadius + 0.005)
-        ); // Slightly above the surface
+        );
       }
       return points;
     };
 
-    // Helper function to convert latitude and longitude to 3D coordinates
     const latLonToVector3 = (lat: number, lon: number, radius: number) => {
       const phi = (90 - lat) * (Math.PI / 180);
       const theta = (lon + 180) * (Math.PI / 180);
@@ -131,7 +151,18 @@ const EarthSimulation: React.FC = () => {
     };
   }, []);
 
-  return <div ref={mountRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div
+      ref={mountRef}
+      style={{
+        width: "100vw",
+        height: "100vh",
+        position: "fixed",
+        top: 0,
+        left: 0,
+      }}
+    />
+  );
 };
 
 export default EarthSimulation;
