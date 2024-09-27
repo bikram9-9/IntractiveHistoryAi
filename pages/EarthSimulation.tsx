@@ -18,27 +18,34 @@ const EarthSimulation: React.FC = () => {
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mountRef.current.appendChild(renderer.domElement);
 
-    // Starry background
-    // Stars
+    // Stars (unchanged)
     const starsGeometry = new THREE.BufferGeometry();
-    const starsMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.1,
-    });
     const starsVertices = [];
-    for (let i = 0; i < 10000; i++) {
+    const starsSizes = [];
+    for (let i = 0; i < 5000; i++) {
       const x = THREE.MathUtils.randFloatSpread(2000);
       const y = THREE.MathUtils.randFloatSpread(2000);
       const z = THREE.MathUtils.randFloatSpread(2000);
       starsVertices.push(x, y, z);
+      starsSizes.push(Math.random() * 0.4 + 0.1);
     }
     starsGeometry.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(starsVertices, 3)
     );
+    starsGeometry.setAttribute(
+      "size",
+      new THREE.Float32BufferAttribute(starsSizes, 1)
+    );
+
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      sizeAttenuation: true,
+      vertexColors: false,
+    });
     const starField = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(starField);
 
@@ -47,39 +54,61 @@ const EarthSimulation: React.FC = () => {
     const earthGeometry = new THREE.SphereGeometry(earthRadius, 64, 64);
     const textureLoader = new THREE.TextureLoader();
     const earthTexture = textureLoader.load("/images/earth-texture.jpg");
-    const earthMaterial = new THREE.MeshStandardMaterial({
+    const earthMaterial = new THREE.MeshPhongMaterial({
       map: earthTexture,
-      roughness: 0.5,
-      metalness: 0.1,
+      specular: new THREE.Color(0x333333),
+      shininess: 5,
+      bumpMap: earthTexture,
+      bumpScale: 0.02,
     });
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     scene.add(earth);
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Improved Lighting
+    const ambientLight = new THREE.AmbientLight(0x333333); // Reduced ambient light
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 3, 5);
-    scene.add(directionalLight);
+    // Main sunlight
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+    sunLight.position.set(5, 3, 5);
+    scene.add(sunLight);
+
+    // Wider, softer light
+    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+    scene.add(hemisphereLight);
+
+    // Subtle rim light
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    rimLight.position.set(-5, 3, -5);
+    scene.add(rimLight);
 
     camera.position.z = 15;
 
-    // Add OrbitControls
+    // OrbitControls (unchanged)
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+    controls.rotateSpeed = 0.8;
+    controls.zoomSpeed = 1.2;
+    controls.panSpeed = 0.8;
+    controls.minDistance = 6;
+    controls.maxDistance = 50;
+    controls.enableZoom = true;
+    controls.enablePan = true;
+    controls.autoRotate = false;
+    controls.autoRotateSpeed = 0.5;
 
-    // Add country borders
+    // Country borders (unchanged)
     const addCountryBorders = async () => {
       try {
         const response = await fetch("/data/countries.geojson");
         const geoJson = await response.json();
 
         const material = new THREE.LineBasicMaterial({
-          color: 0x000000,
+          color: 0xd3d3d3,
+          linewidth: 2,
           transparent: true,
-          opacity: 0.5,
+          opacity: 0.7,
         });
 
         const allPoints: THREE.Vector3[] = [];
@@ -87,11 +116,11 @@ const EarthSimulation: React.FC = () => {
         geoJson.features.forEach((feature: any) => {
           if (feature.geometry.type === "Polygon") {
             allPoints.push(
-              ...getPointsFromPolygon(feature.geometry.coordinates[0])
+              ...getPointsFromPolygon(feature.geometry.coordinates[0], 3)
             );
           } else if (feature.geometry.type === "MultiPolygon") {
             feature.geometry.coordinates.forEach((polygon: number[][][]) => {
-              allPoints.push(...getPointsFromPolygon(polygon[0]));
+              allPoints.push(...getPointsFromPolygon(polygon[0], 3));
             });
           }
         });
@@ -104,14 +133,18 @@ const EarthSimulation: React.FC = () => {
       }
     };
 
-    const getPointsFromPolygon = (coordinates: number[][]): THREE.Vector3[] => {
+    const getPointsFromPolygon = (
+      coordinates: number[][],
+      simplifyFactor: number
+    ): THREE.Vector3[] => {
       const points: THREE.Vector3[] = [];
-      for (let i = 0; i < coordinates.length; i++) {
+      for (let i = 0; i < coordinates.length; i += simplifyFactor) {
         const coord = coordinates[i];
-        const nextCoord = coordinates[(i + 1) % coordinates.length];
-        points.push(latLonToVector3(coord[1], coord[0], earthRadius + 0.005));
+        const nextCoord =
+          coordinates[(i + simplifyFactor) % coordinates.length];
+        points.push(latLonToVector3(coord[1], coord[0], earthRadius + 0.01));
         points.push(
-          latLonToVector3(nextCoord[1], nextCoord[0], earthRadius + 0.005)
+          latLonToVector3(nextCoord[1], nextCoord[0], earthRadius + 0.01)
         );
       }
       return points;
