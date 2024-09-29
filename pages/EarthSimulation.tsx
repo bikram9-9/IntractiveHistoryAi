@@ -68,8 +68,8 @@ const EarthSimulation: React.FC = () => {
     controls.enableRotate = true;
 
     // Set zoom limits
-    const minDistance = 7;
-    const maxDistance = 20;
+    const minDistance = 6;
+    const maxDistance = 10;
     controls.minDistance = minDistance;
     controls.maxDistance = maxDistance;
 

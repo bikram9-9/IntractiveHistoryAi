@@ -18,7 +18,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="relative w-screen h-screen">
       <EarthSimulation />
-      <div className="absolute top-0 left-0 right-0 p-6 bg-black/40 backdrop-blur-lg">
+      {/* <div className="absolute top-0 left-0 right-0 p-6 bg-black/40 backdrop-blur-lg">
         <div className="max-w-5xl mx-auto flex flex-wrap items-center gap-4">
           <input
             type="text"
@@ -37,7 +37,7 @@ const HomePage: React.FC = () => {
             Let's Go
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
