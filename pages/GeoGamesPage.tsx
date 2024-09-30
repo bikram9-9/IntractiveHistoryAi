@@ -33,20 +33,26 @@ const GeoGamesPage = () => {
           <GameCard
             title="Learn Continents!"
             icon="Globe"
-            buttonText="HOME"
-            color="yellow"
+            buttonText="PLAY NOW"
+            bgColor="geo-yellow"
+            secondColor="geo-green"
+            gamePath="continents"
           />
           <GameCard
-            title="Find the Borders"
+            title="Border Dash"
             icon="Map"
             buttonText="PLAY NOW"
-            color="red"
+            bgColor="geo-light-pink"
+            secondColor="geo-dark-pink"
+            gamePath="BorderDash"
           />
           <GameCard
-            title="Find the Borders"
+            title="Name Capitals"
             icon="Map"
             buttonText="PLAY NOW"
-            color="teal"
+            bgColor="geo-light-teal"
+            secondColor="geo-green"
+            gamePath="capitals"
           />
         </div>
       </main>

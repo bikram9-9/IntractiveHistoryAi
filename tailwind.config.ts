@@ -6,14 +6,27 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+    "bg-geo-light-pink",
+    "bg-geo-dark-pink",
+    "bg-geo-yellow",
+    "bg-geo-light-teal",
+    "geo-green",
+    "geo-bg",
+    "geo-yellow",
+  ],
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        "geo-green": "#2d6061",
+        "geo-bg": "#e5dac0",
+        "geo-yellow": "#f1c63b",
+        "geo-light-pink": "##ff9b88",
+        "geo-dark-pink": "#f27663",
+        "geo-light-teal": "#91ccbf",
       },
       fontFamily: {
-        'lucky': ['"Luckiest Guy"', 'cursive'],
+        lucky: ['"Luckiest Guy"', "cursive"],
       },
     },
   },
