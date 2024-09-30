@@ -6,6 +6,12 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 const EarthSimulation: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [fps, setFps] = useState<number>(0);
+  const [gameState, setGameState] = useState<'idle' | 'showing' | 'guessing'>('idle');
+  const [currentCountry, setCurrentCountry] = useState<string>('');
+  const [timer, setTimer] = useState<number>(0);
+  const [userGuess, setUserGuess] = useState<string>('');
+  const [score, setScore] = useState<number>(0);
+  const [borderCountries, setBorderCountries] = useState<string[]>([]);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -68,7 +74,7 @@ const EarthSimulation: React.FC = () => {
     controls.enableRotate = true;
 
     // Set zoom limits
-    const minDistance = 6;
+    const minDistance = 5;
     const maxDistance = 10;
     controls.minDistance = minDistance;
     controls.maxDistance = maxDistance;
@@ -113,6 +119,8 @@ const EarthSimulation: React.FC = () => {
         console.error("Error loading country borders:", error);
       }
     };
+
+
 
     const getPointsFromPolygon = (coordinates: number[][], points: THREE.Vector3[], tempVector: THREE.Vector3) => {
       for (let i = 0; i < coordinates.length; i += 2) {
@@ -322,22 +330,109 @@ const EarthSimulation: React.FC = () => {
     };
   }, []);
 
+  const startGame = () => {
+    setGameState('showing');
+    const randomCountry = getRandomCountry();
+    setCurrentCountry(randomCountry);
+    setBorderCountries(getBorderingCountries(randomCountry));
+    
+    // Show country for 4 seconds
+    setTimeout(() => {
+      setGameState('guessing');
+      setTimer(15);
+      const countdownInterval = setInterval(() => {
+        setTimer((prevTimer) => {
+          if (prevTimer <= 1) {
+            clearInterval(countdownInterval);
+            endRound();
+            return 0;
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+    }, 4000);
+  };
+
+  const getRandomCountry = () => {
+    // Implement logic to get a random country
+    // For now, we'll return a placeholder
+    return "France";
+  };
+
+  const getBorderingCountries = (country: string) => {
+    // Implement logic to get bordering countries
+    // For now, we'll return placeholders
+    return ["Germany", "Spain", "Italy", "Belgium"];
+  };
+
+  const endRound = () => {
+    setGameState('idle');
+    // Check user's guess against bordering countries
+    const guessedCountries = userGuess.split(',').map(country => country.trim().toLowerCase());
+    const correctGuesses = guessedCountries.filter(country => 
+      borderCountries.some(borderCountry => borderCountry.toLowerCase() === country)
+    );
+    setScore(prevScore => prevScore + correctGuesses.length);
+    setUserGuess('');
+  };
+
+  const handleStartGame = () => {
+    startGame();
+    };
+
+  const handleGuessSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Handle the guess submission here
+    console.log("Submitting guess:", userGuess);
+  };
+
   return (
-    <>
+    <div className="relative w-screen h-screen">
       <div
         ref={mountRef}
-        style={{
-          width: "100vw",
-          height: "100vh",
-          position: "fixed",
-          top: 0,
-          left: 0,
-        }}
+        className="absolute top-0 left-0 w-full h-full"
       />
-      <div style={{ position: 'fixed', top: 10, left: 10, color: 'white', backgroundColor: 'rgba(0,0,0,0.5)', padding: '5px' }}>
+      <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded">
         FPS: {fps}
       </div>
-    </>
+      <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white p-4 rounded-lg">
+        <h2 className="text-2xl font-bold mb-2">Earth Border Game</h2>
+        {gameState === 'idle' && (
+          <button
+            onClick={handleStartGame}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Start Game
+          </button>
+        )}
+        {gameState === 'showing' && (
+          <div className="text-xl">
+            Memorize the borders of: {currentCountry}
+          </div>
+        )}
+        {gameState === 'guessing' && (
+          <form onSubmit={handleGuessSubmit} className="space-y-2">
+            <div className="text-xl mb-2">Time left: {timer}s</div>
+            <input
+              type="text"
+              value={userGuess}
+              onChange={(e) => setUserGuess(e.target.value)}
+              placeholder="Enter bordering countries"
+              className="w-full p-2 text-black rounded"
+            />
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Submit Guess
+            </button>
+          </form>
+        )}
+        <div className="mt-4 text-xl">
+          Score: {score}
+        </div>
+      </div>
+    </div>
   );
 };
 
