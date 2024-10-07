@@ -1,17 +1,7 @@
 import React from "react";
 import { Globe, Map, MapPin, LucideIcon } from "lucide-react";
 import { useRouter } from "next/router";
-
-type IconType = "Globe" | "Map" | "MapPin";
-
-type GameCardProps = {
-  title: string;
-  icon: IconType;
-  buttonText: string;
-  bgColor: string;
-  secondColor: string;
-  gamePath: string;
-};
+import { GameCardProps, IconType } from "../types/gametypes";
 
 const iconComponents: Record<IconType, LucideIcon> = {
   Globe,
@@ -39,14 +29,17 @@ const GameCard: React.FC<GameCardProps> = ({
       <h2 className="text-xl font-bold mb-4 text-teal-800">
         {title.toUpperCase()}
       </h2>
-      <div className={`bg-${secondColor} w-full h-4`}></div>
-      <IconComponent className="w-20 h-20 mx-auto mb-4 text-teal-600" />
-      <button
-        onClick={handleClick}
-        className="bg-white text-teal-800 font-bold py-2 px-8 rounded-full shadow-sm hover:bg-teal-50 transition-colors"
+      <IconComponent className="w-20 h-20 mx-auto mb-4 text-teal-600 mt-2" />
+      <div
+        className={`bg-${secondColor} w-full h-20 flex items-center justify-center`}
       >
-        {buttonText}
-      </button>
+        <button
+          onClick={handleClick}
+          className="bg-white text-teal-800 font-bold py-2 px-8 rounded-full shadow-sm hover:bg-teal-50 transition-colors"
+        >
+          {buttonText}
+        </button>
+      </div>
     </div>
   );
 };

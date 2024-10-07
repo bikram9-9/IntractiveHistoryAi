@@ -1,0 +1,96 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  email            String             @unique
+  password         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  scores           Score[]
+  LeaderBoardEntry LeaderBoardEntry[]
+  PlayedGame       PlayedGame[]
+  LeaderBoard      LeaderBoard[]
+}
+
+model Game {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  difficulty  String
+  category    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  scores      Score[]
+  leaderBoard LeaderBoard[]
+  PlayedGame  PlayedGame[]
+}
+
+model LeaderBoardEntry {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  score     Int
+  rank      Int
+  level     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlayedGame {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  game      Game     @relation(fields: [gameId], references: [id])
+  gameId    String   @db.ObjectId
+  rank      Int
+  highScore Int
+  level     String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LeaderBoard {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  score     Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  Game      Game?    @relation(fields: [gameId], references: [id])
+  gameId    String?  @db.ObjectId
+}
+
+model Score {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  score     Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  game      Game     @relation(fields: [gameId], references: [id])
+  gameId    String   @db.ObjectId
+}
+
+model Country {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  code      String   @unique
+  capital   String
+  continent String
+  flag      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Continent {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
-import HomePage from "./HomePage";
+import HomePage from "./home";
 
 // Dynamically import the EarthSimulation component with SSR disabled
-const EarthSimulation = dynamic(() => import("./EarthSimulation"), {
+const EarthSimulation = dynamic(() => import("../components/EarthSimulation"), {
   ssr: false,
 });
 

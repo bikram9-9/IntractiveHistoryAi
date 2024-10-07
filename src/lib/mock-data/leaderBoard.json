@@ -1,0 +1,89 @@
+[
+  {
+    "user": {
+      "name": "John Doe",
+      "id": "user1",
+      "email": "john@example.com",
+      "games": [
+        {
+          "game": { "path": "/games/flag-rush" },
+          "rank": 1,
+          "highScore": 9500,
+          "level": "GEOWIZARD"
+        },
+        {
+          "game": { "path": "/games/capital-quest" },
+          "rank": 3,
+          "highScore": 8200,
+          "level": "ATLASMASTER"
+        }
+      ]
+    }
+  },
+  {
+    "user": {
+      "name": "Jane Smith",
+      "id": "user2",
+      "email": "jane@example.com",
+      "games": [
+        {
+          "game": { "path": "/games/flag-rush" },
+          "rank": 2,
+          "highScore": 9200,
+          "level": "MAPMANIAC"
+        }
+      ]
+    }
+  },
+  {
+    "user": {
+      "name": "Alice Johnson",
+      "id": "user3",
+      "email": "alice@example.com",
+      "games": [
+        {
+          "game": { "path": "/games/globetrotter" },
+          "rank": 5,
+          "highScore": 8800,
+          "level": "ATLASMASTER"
+        }
+      ]
+    }
+  },
+  {
+    "user": {
+      "name": "Bob Williams",
+      "id": "user4",
+      "email": "bob@example.com",
+      "games": [
+        {
+          "game": { "path": "/games/capital-quest" },
+          "rank": 4,
+          "highScore": 8100,
+          "level": "GLOBETROTTER"
+        },
+        {
+          "game": { "path": "/games/flag-frenzy" },
+          "rank": 6,
+          "highScore": 7800,
+          "level": "NOOBIE"
+        }
+      ]
+    }
+  },
+  {
+    "user": {
+      "name": "Emma Brown",
+      "id": "user5",
+      "email": "emma@example.com",
+      "games": [
+        {
+          "game": { "path": "/games/globetrotter" },
+          "rank": 7,
+          "highScore": 8600,
+          "level": "GLOBETROTTER"
+        }
+      ]
+    }
+  }
+]
